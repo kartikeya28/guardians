@@ -1,0 +1,40 @@
+'code for graphite epoxy'
+%initial properties
+e1=155e9;
+e2=12.1e9;
+e3=12.10e9;
+v23=.458;
+v13=.248;
+v12=.248;
+g23=3.2e9;
+g13=4.4e9;
+g12=4.4e9;
+%stiffness matrix
+s=[(1/e1) -(v12/e1) -(v13/e1) 0 0 0; -(v12/e1) (1/e2) -(v23/e2) 0 0 0;(v13/e1) -(v23/e2) (1/e3) 0 0 0;0 0 0 (1/g23) 0 0;0 0 0 0 (1/g13) 0;0 0 0 0 0 (1/g12)];
+'stiffness matrix'
+s
+%compliance matrix
+'compliance matrix'
+c=s^-1;
+c
+%strain matrix
+strain=[10e-4; 10e-4; 0; 0; 0; 0];
+'strain matrix'
+strain
+'stress'
+stress=c*strain
+syms t;
+%R matrix for rotation of stresses
+R=[1 0 0 0 0 0; 0 (cos(t))^2 (sin(t))^2 sin(2*t) 0 0; 0 (sin(t))^2 (cos(t))^2  -sin(2*t) 0 0; 0 -0.5*sin(2*t) 0.5*sin(2*t) cos(2*t) 0 0;0 0 0 0 cos(t) -sin(t); 0 0 0 0 sin(t) cos(t)];
+%r matrix for rotation of strains
+r=[1 0 0 0 0 0; 0 (cos(t))^2 (sin(t))^2 .5*sin(2*t) 0 0; 0 (sin(t))^2 (cos(t))^2  -0.5*sin(2*t) 0 0; 0 -sin(2*t) sin(2*t) cos(2*t) 0 0;0 0 0 0 cos(t) -sin(t); 0 0 0 0 sin(t) cos(t)];
+'stiffness matrix when rotated about theta about x1 axis'
+%using symobolic maths
+syms e1 e2 e3 v23 v13 v12 g23 g13 g12
+s=[(1/e1) -(v12/e1) -(v13/e1) 0 0 0; -(v12/e1) (1/e2) -(v23/e2) 0 0 0;(v13/e1) -(v23/e2) (1/e3) 0 0 0;0 0 0 (1/g23) 0 0;0 0 0 0 (1/g13) 0;0 0 0 0 0 (1/g12)];
+%stiffness matrix by rotation of compliance matrix
+c=inv(s);
+cr=R*c*inv(r)
+subs(cr,[t,e1,e2,e3,v23,v13,v12,g23,g13,g12],[pi/6,155e9,12.1e9,12.10e9,.458,.248,.248,3.2e9,4.4e9,4.4e9])
+
+
